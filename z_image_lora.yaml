@@ -1,0 +1,136 @@
+---
+job: "extension"
+
+config:
+  name: "zimage_spring_watercolor_style"
+
+  process:
+    - type: "diffusion_trainer"
+
+      # ===============================
+      # 학습 폴더 & DB
+      # ===============================
+      training_folder: "모델 저장경로"
+      sqlite_db_path: "모델 저장경로"
+      device: "cuda"
+
+      # ===============================
+      # 스타일 토큰
+      # ===============================
+      trigger_word: "<springwc>"
+
+      performance_log_every: 0
+
+      # ===============================
+      # LoRA 네트워크 (스타일 전이용)
+      # ===============================
+      network:
+        type: "lora"
+        linear: 16
+        linear_alpha: 16
+        conv: 8
+        conv_alpha: 8
+        lokr_full_rank: false
+        lokr_factor: -1
+        network_kwargs:
+          ignore_if_contains: []
+
+      # ===============================
+      # 저장 설정
+      # ===============================
+      save:
+        dtype: "bf16"
+        save_every: 200
+        max_step_saves_to_keep: 20
+        save_format: "diffusers"
+        push_to_hub: false
+
+      # ===============================
+      # 데이터셋
+      # ===============================
+      datasets:
+        - folder_path: "훈련 데이터 경로"
+          mask_path: null
+
+          default_caption: "<springwc>"
+          caption_ext: ""
+          caption_dropout_rate: 0.0
+
+          cache_latents_to_disk: false
+          is_reg: false
+          network_weight: 1
+
+          resolution:
+            - 512  # 학습 해상도는 512로 안정화
+
+          num_frames: 1
+          do_i2v: false
+          flip_x: false
+          flip_y: false
+
+      # ===============================
+      # 학습 설정
+      # ===============================
+      train:
+        batch_size: 1
+        gradient_accumulation: 1
+
+        steps: 3000  # 300장 기준 적절
+        lr: 0.0001
+
+        train_unet: true
+        train_text_encoder: false  # 🔥 스타일 전이용은 OFF
+
+        gradient_checkpointing: true
+
+        noise_scheduler: "flowmatch"
+        timestep_type: "weighted"
+
+        content_or_style: "style"
+
+        optimizer: "adamw8bit"
+        optimizer_params:
+          weight_decay: 0.0004
+
+        dtype: "bf16"
+
+        loss_type: "mse"
+
+        do_differential_guidance: false
+
+      # ===============================
+      # 모델
+      # ===============================
+      model:
+        name_or_path: "Tongyi-MAI/Z-Image-Turbo" or "경로" ##허깅페이스로 다운로드 가능합니다.
+        arch: "zimage:turbo"
+
+        quantize: false        # 학습 안정성 위해 끔
+        quantize_te: false
+
+        low_vram: true
+
+        assistant_lora_path: "경로 or 다운로드"
+
+      # ===============================
+      # 샘플 (검증용)
+      # ===============================
+      sample:
+        sampler: "flowmatch"
+        sample_every: 200
+        width: 512
+        height: 512
+        seed: 42
+        guidance_scale: 1
+        sample_steps: 8
+
+        prompts:
+          - "<springwc> woman"
+          - "<springwc> man"
+          - "<springwc> ----"
+
+        neg: "photorealistic, ultra realistic, photo, skin pores"
+
+meta:
+  name: "[name]"
+  version: "1.0"
