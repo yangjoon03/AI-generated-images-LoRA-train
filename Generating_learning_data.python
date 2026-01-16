@@ -1,0 +1,105 @@
+import torch
+from diffusers import ZImagePipeline
+import os
+import random
+
+# ===============================
+# 1. 모델 로드
+# ===============================
+pipe = ZImagePipeline.from_pretrained(
+    "Tongyi-MAI/Z-Image-Turbo",
+    torch_dtype=torch.bfloat16,
+    use_safetensors=True
+)
+pipe.to("cuda")
+
+# ===============================
+# 2. 출력 폴더
+# ===============================
+output_dir = "저장 경로"
+os.makedirs(output_dir, exist_ok=True)
+
+# ===============================
+# 3. 스타일 토큰
+# ===============================
+STYLE_TOKEN = "<spring_watercolor_background>"
+
+# ===============================
+# 4. 장면 비율 (총 300장)
+# ===============================
+scene_types = (
+    ["day"] * 150 +
+    ["night"] * 150
+)
+random.shuffle(scene_types)
+
+# ===============================
+# 5. 컬러 팔레트
+# ===============================
+day_colors = [
+    "pastel green", "soft sky blue", "light yellow",
+    "peach pink", "mint green", "lavender"
+]
+
+night_colors = [
+    "deep blue", "indigo", "violet",
+    "muted purple", "cool navy", "soft midnight blue"
+]
+
+# ===============================
+# 6. 프롬프트 생성 함수
+# ===============================
+def build_prompt(time_type):
+    if time_type == "day":
+        colors = random.choice(day_colors)
+        lighting = "soft spring daylight"
+    else:
+        colors = random.choice(night_colors)
+        lighting = "quiet spring night glow"
+
+    return (
+        f"{STYLE_TOKEN}, "
+        f"watercolor wash background, abstract painted background, "
+        f"soft hand-painted texture, pastel watercolor gradients, "
+        f"{colors} color palette, "
+        f"{lighting}, "
+        f"empty scene, pure background, "
+        f"no people, no humans, no animals, no objects, "
+        f"no buildings, no trees, no flowers, "
+        f"flat background, minimal composition"
+    )
+
+# ===============================
+# 7. 생성 루프 (300장)
+# ===============================
+print("수채화 배경 데이터셋 생성 시작")
+
+for i, time_type in enumerate(scene_types):
+    try:
+        prompt = build_prompt(time_type)
+        generator = torch.Generator("cuda").manual_seed(
+            random.randint(1, 999_999_999)
+        )
+
+        image = pipe(
+            prompt=prompt,
+            num_inference_steps=12,
+            guidance_scale=0.0,
+            width=1024,
+            height=1024,
+            generator=generator
+        ).images[0]
+
+        name = f"spring_wc_bg_{i+1:03d}_{time_type}"
+        image.save(os.path.join(output_dir, f"{name}.png"))
+
+        with open(os.path.join(output_dir, f"{name}.txt"), "w", encoding="utf-8") as f:
+            f.write(prompt)
+
+        if (i + 1) % 25 == 0:
+            print(f"[{i+1:03d}/300] 진행 중...")
+
+    except Exception as e:
+        print(f"❌ 에러 {i+1}: {e}")
+
+print("✅ 완료! 수채화 배경 300장 생성 완료")
