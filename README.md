@@ -1,4 +1,15 @@
 # ZIT(Z image turbo)모델 LoRA 훈련 및 사용 - img2img 수채화 만들기
+* 생성모델로 원본 이미지의 형태를 유지하기는 어려움.
+* IP Adapter를 사용할 경우 가능 NST와 비슷한 결과를 내는 것이 가능함.
+* LoRA를 훈련을 하더라도 프롬프트를 추가하는 것이 더 좋은 결과를 나타냄.
+  * ex)동일한 프롬프트일시 LoRA를 튜닝한 것이 원하는 이미지 스타일과 비슷하게 나옴
+ 
+## 문제점
+* 입을 닫고 있지만 입이 약갈 열린다.
+* 밑의 사진과 같이 특정 부분이 전혀 다른 이미지가 생성되는 경우가 있다.
+
+## 개선
+* 훈련된 LoRA를 사용하더라도 프롬프트를 통해서 더 좋은 결과를 내는 것이 가능하다.
 
 Z image turbo : [모델](https://github.com/Tongyi-MAI/Z-Image)
 AI Toolkit : [프로젝트 설정](https://github.com/ostris/ai-toolkit/tree/main/config/examples)
