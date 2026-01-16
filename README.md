@@ -1,4 +1,4 @@
-# ZIT(Z image turbo)모델 LoRA 훈련 및 사용 - 이미지 수채화 만들기
+# ZIT(Z image turbo)모델 LoRA 훈련 및 사용 - img2img 수채화 만들기
 
 Z image turbo : [모델](https://github.com/Tongyi-MAI/Z-Image)
 AI Toolkit : [프로젝트 설정](https://github.com/ostris/ai-toolkit/tree/main/config/examples)
@@ -8,7 +8,8 @@ VideoX-Fun : [이미지 컨트롤](https://github.com/aigc-apps/VideoX-Fun)
 ZIT모델을 사용하여 수채화 백그라운드 이미지 생성
 Generating_learning_data.python 실행시 300장의 이미지 생성
 .txt파일은 생성된 이미지의 프롬프트를 사용.
-* 스타일 전이시에는 해당 프롬프트는 학습에 사용하지 않으므로 .txt삭제 필요
+* 동일 모델을 사용하여 데이터를 구축하여 .txt파일을 삭제하여 훈련.
+
 
 
 
