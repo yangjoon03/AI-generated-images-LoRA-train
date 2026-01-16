@@ -4,6 +4,17 @@ Z image turbo : [모델](https://github.com/Tongyi-MAI/Z-Image)
 AI Toolkit : [프로젝트 설정](https://github.com/ostris/ai-toolkit/tree/main/config/examples)
 VideoX-Fun : [이미지 컨트롤](https://github.com/aigc-apps/VideoX-Fun)
 
+## 훈련데이터 생성
+ZIT모델을 사용하여 수채화 백그라운드 이미지 생성
+Generating_learning_data.python 실행시 300장의 이미지 생성
+.txt파일은 생성된 이미지의 프롬프트를 사용.
+* 스타일 전이시에는 해당 프롬프트는 학습에 사용하지 않으므로 .txt삭제 필요
+
+
+
+
+
+
 ## LoRA 훈련 세팅 yaml 기능 설명
 ### 1. 프로젝트 및 경로 설정 (General)
 | 항목 | 설정값 | 설명 |
